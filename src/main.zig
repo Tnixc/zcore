@@ -20,13 +20,15 @@ pub const Cpu = struct {
 
 pub fn main() !void {
     const cpu = Cpu{
-        .PC = 0x0,
-        .IR = 0x0,
-        .Flags = 0x0,
+        .PC = 0,
+        .IR = 0,
+        .Flags = 0b0000_0000,
         .Registers = [_]u16{0} ** 8,
-        .Memory = [_]u16{0} ** 256,
+        .WorkingMemory = [_]u16{0} ** 256,
+        .ProgramMemory = [_]u16{0} ** 256,
     };
     std.debug.print("CPU!\n{any}\n", .{cpu});
+
     const sample = Instruction{
         .op = Op.load,
         .dest = 0,
