@@ -1,5 +1,6 @@
 const std = @import("std");
 const read = @import("read.zig");
+
 pub const Op = enum { load, store, ALUadd, ALUsub, ALUand, ALUor, ALUnot, jump, jumpz, halt, IOin, IOout };
 
 pub const Instruction = struct {
@@ -19,7 +20,8 @@ pub const Cpu = struct {
 };
 
 pub fn main() !void {
-    try read.readASM("foo.txt");
+    const a = try read.readtoMachineCode("foo.asm");
+    std.debug.print("a: {b}\n", .{a});
     // const cpu = Cpu{
     //     .PC = 0,
     //     .IR = 0,
@@ -29,12 +31,4 @@ pub fn main() !void {
     //     .ProgramMemory = [_]u16{0} ** 256,
     // };
     // std.debug.print("CPU!\n{any}\n", .{cpu});
-    //
-    // const sample = Instruction{
-    // .op = Op.load,
-    //     .dest = 0,
-    //     .src1 = 0,
-    //     .src2 = 0,
-    // };
-    // std.debug.print("Sample instruction: {any}\n", .{sample});
 }
