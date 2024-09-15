@@ -30,7 +30,6 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-
     exe.root_module.addImport("string", string.module("string"));
 
     // This declares intent for the executable to be installed into the
