@@ -19,7 +19,7 @@ pub fn build(b: *std.Build) void {
     // location when the user invokes the "install" step (the default step when
     // running `zig build`).
 
-    const exe = b.addExecutable(.{
+    var exe = b.addExecutable(.{
         .name = "core",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
@@ -30,6 +30,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+
     exe.root_module.addImport("string", string.module("string"));
 
     // This declares intent for the executable to be installed into the

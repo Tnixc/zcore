@@ -1,7 +1,7 @@
 const std = @import("std");
 const main = @import("main.zig");
 const util = @import("util.zig");
-const String = @import("string").String;
+
 const s = util.StrToU8;
 const Op = main.Op;
 
@@ -20,6 +20,8 @@ pub fn readtoMachineCode(filename: []const u8) ![]const u16 {
         // var isInstruction = false;
         // std.debug.print("isInstruction: {any}\n", .{isInstruction});
         std.debug.print("{s}\n", .{line});
+        // const se = String.init(line);
+        // std.debug.print("{s}\n", .{se});
         var isLabel = false;
         if (line[line.len - 1] == ':') {
             isLabel = true;
