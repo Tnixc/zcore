@@ -1,2 +1,2 @@
 all:
-	zigc build && ./zig-out/bin/core
+	zig build && ./zig-out/bin/core

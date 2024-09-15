@@ -1,8 +1,9 @@
 const std = @import("std");
 const main = @import("main.zig");
-const util = @import("util.zig");
+const utils = @import("util.zig");
+const String = @import("string").String;
 
-const s = util.StrToU8;
+const s = utils.StrToU8;
 const Op = main.Op;
 
 pub fn readtoMachineCode(filename: []const u8) ![]const u16 {
@@ -14,19 +15,28 @@ pub fn readtoMachineCode(filename: []const u8) ![]const u16 {
     var instructions = std.ArrayList(u16).init(std.heap.page_allocator);
     defer instructions.deinit();
     var buf: [1024]u8 = undefined;
-    
+
     var index: usize = 0;
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     while (try in_stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
-        // var isInstruction = false;
-        // std.debug.print("isInstruction: {any}\n", .{isInstruction});
-        std.debug.print("{s}\n", .{line});
-        // const se = String.init(line);
-        // std.debug.print("{s}\n", .{se});
-        var isLabel = false;
-        if (line[line.len - 1] == ':') {
-            isLabel = true;
+        var linestr = String.init(arena.allocator());
+        try linestr.concat(line);
+        linestr.trim(&utils.whitelist);
+
+        if (linestr.includesLiteral(";")) {
+            const char = linestr.find(";").?;
+            linestr.clear();
+            try linestr.concat(line[0..char]);
+            linestr.trim(&utils.whitelist);
         }
-        std.debug.print("isLabel: {any}\n", .{isLabel});
+
+        if (linestr.len() == 0) {
+            continue;
+        }
+        
+        var isLabel = false;
+        
+        std.debug.print("line {any}: {s}\n", .{ index, linestr.str() });
         index += 1;
     }
 

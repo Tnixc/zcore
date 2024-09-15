@@ -21,20 +21,8 @@ pub const Cpu = struct {
 };
 
 pub fn main() !void {
-    const a = try read.readtoMachineCode("foo.asm");
-    std.debug.print("a: {b}\n", .{a});
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-
-    // Create your String
-    var myString = string.String.init(arena.allocator());
-    defer myString.deinit();
-
-    // Use functions provided
-    try myString.concat("🔥 Hello!");
-    _ = myString.pop();
-    try myString.concat(", World 🔥");
-    std.debug.print("str: {s}\n", .{myString.str()});
+    _ = try read.readtoMachineCode("foo.asm");
+    // std.debug.print("a: {b}\n", .{a});
     // const cpu = Cpu{
     //     .PC = 0,
     //     .IR = 0,
