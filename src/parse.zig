@@ -17,24 +17,31 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     } else if (std.mem.eql(u8, op.str(), "load")) {
         opcode = 0b0001;
         dest = try parseRegister(line[1]);
+        // vals = try parseRegister(line[2]) << 4;
     } else if (std.mem.eql(u8, op.str(), "store")) {
         opcode = 0b0010;
         dest = try parseRegister(line[1]);
+        // vals = try parseRegister(line[2]) << 4;
     } else if (std.mem.eql(u8, op.str(), "add")) {
         opcode = 0b0011;
         dest = try parseRegister(line[1]);
+        vals = try dualVal(line[2], line[3]);
     } else if (std.mem.eql(u8, op.str(), "sub")) {
         opcode = 0b0100;
         dest = try parseRegister(line[1]);
+        vals = try dualVal(line[2], line[3]);
     } else if (std.mem.eql(u8, op.str(), "and")) {
         opcode = 0b0101;
         dest = try parseRegister(line[1]);
+        vals = try dualVal(line[2], line[3]);
     } else if (std.mem.eql(u8, op.str(), "or")) {
         opcode = 0b0110;
         dest = try parseRegister(line[1]);
+        vals = try dualVal(line[2], line[3]);
     } else if (std.mem.eql(u8, op.str(), "not")) {
         opcode = 0b0111;
         dest = try parseRegister(line[1]);
+        vals = try dualVal(line[2], line[3]);
     } else if (std.mem.eql(u8, op.str(), "jump")) {
         opcode = 0b1000;
         vals = try indexOfLabel(line, labels) orelse return error.InvalidLabel;
@@ -54,6 +61,16 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     }
     // std.debug.print("opcode: {d}\ndest: {d}\nvals: {d}\n", .{ opcode, dest, vals });
     return 0;
+}
+
+fn dualVal(w1: String, w2: String) !u8 {
+    const val1 = try parseRegister(w1);
+    const val2 = try parseRegister(w2);
+    // return val1 << 4 | val2;
+    const res = (@as(u8, val1) << 4) | val2;
+    std.debug.print("dualVal: {s}\n", .{try utils.zeroPad(u8, res)});
+    return res;
+    // return 0;
 }
 
 fn parseInt(word: String) !u8 {

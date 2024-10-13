@@ -16,6 +16,7 @@ loop:
 
     ; Add current number to sum
     add r2, r2, r0
+    add r2, r6, r7
 
     ; Increment counter
     loadi r3, 1
