@@ -2,6 +2,7 @@ const std = @import("std");
 const read = @import("read.zig");
 const parse = @import("parse.zig");
 const string = @import("string");
+const utils = @import("util.zig");
 
 pub const Op = enum { load, store, ALUadd, ALUsub, ALUand, ALUor, ALUnot, jump, jumpz, halt, IOin, IOout };
 
@@ -22,7 +23,10 @@ pub const Cpu = struct {
 };
 
 pub fn main() !void {
-    _ = try read.readFileToMachineCode("foo.asm");
+    const instructions = try read.readFileToMachineCode("foo.asm");
+    for (instructions) |instr| {
+        std.debug.print("instr: {s}\n", .{try utils.zeroPad(u16, instr)});
+    }
     // std.debug.print("a: {b}\n", .{a});
     // const cpu = Cpu{
     //     .PC = 0,

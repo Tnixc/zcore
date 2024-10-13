@@ -73,7 +73,7 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
             }
 
             // const thisRes = try lineToMachineCode(tokens, &label_map);
-            _ = try parse.parseLine(tokens, &label_map);
+            try instructions.append(try parse.parseLine(tokens, &label_map));
             index += 1;
         }
         line_index += 1;
