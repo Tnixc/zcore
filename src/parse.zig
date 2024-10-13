@@ -59,8 +59,13 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     } else {
         return error.InvalidOpcode;
     }
+    const op16 = @as(u16, opcode) << 12;
+    const dest16 = @as(u16, dest) << 8;
+    const vals16 = @as(u16, vals);
+    const res = op16 | dest16 | vals16;
     // std.debug.print("opcode: {d}\ndest: {d}\nvals: {d}\n", .{ opcode, dest, vals });
-    return 0;
+    std.debug.print("bytecode: {s}\n", .{try utils.zeroPad(u16, res)});
+    return res;
 }
 
 fn dualVal(w1: String, w2: String) !u8 {
