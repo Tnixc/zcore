@@ -17,11 +17,11 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     } else if (std.mem.eql(u8, op.str(), "load")) {
         opcode = 0b0001;
         dest = try parseRegister(line[1]);
-        // vals = try parseRegister(line[2]) << 4;
+        vals = @as(u8, try parseRegister(line[2])) << 4;
     } else if (std.mem.eql(u8, op.str(), "store")) {
         opcode = 0b0010;
         dest = try parseRegister(line[1]);
-        // vals = try parseRegister(line[2]) << 4;
+        vals = @as(u8, try parseRegister(line[2])) << 4;
     } else if (std.mem.eql(u8, op.str(), "add")) {
         opcode = 0b0011;
         dest = try parseRegister(line[1]);
@@ -66,11 +66,8 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
 fn dualVal(w1: String, w2: String) !u8 {
     const val1 = try parseRegister(w1);
     const val2 = try parseRegister(w2);
-    // return val1 << 4 | val2;
-    const res = (@as(u8, val1) << 4) | val2;
-    std.debug.print("dualVal: {s}\n", .{try utils.zeroPad(u8, res)});
+    const res: u8 = (@as(u8, val1) << 4) | val2;
     return res;
-    // return 0;
 }
 
 fn parseInt(word: String) !u8 {
