@@ -17,8 +17,7 @@ loop:
     sub R3, R0, R1
 
     ; If counter <= 5, continue loop
-
-continue:
+    jumpz end
 
 end:
     halt
