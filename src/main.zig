@@ -1,5 +1,6 @@
 const std = @import("std");
 const read = @import("read.zig");
+const parse = @import("parse.zig");
 const string = @import("string");
 
 pub const Op = enum { load, store, ALUadd, ALUsub, ALUand, ALUor, ALUnot, jump, jumpz, halt, IOin, IOout };
