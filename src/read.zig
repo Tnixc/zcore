@@ -38,13 +38,14 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
             continue; // empty line
         }
 
-        if (linestr.endsWith(":")) { // label
+        if (linestr.endsWith(":")) { // line is label
             const label = try linestr.substr(0, linestr.len() - 1);
             std.debug.print("line {d}: LABEL: {s}\n", .{ index, label.str() });
             try label_map.put(label, index);
-        } else { // instruction
+        } else { // line is instruction
             std.debug.print("line {d}: {s}\n", .{ index, linestr.str() });
             linestr.toLowercase();
+
             // FORMAT: OP DEST,SRC1,SRC2
 
             var tokens = [4]String{ undefined, undefined, undefined, undefined };
@@ -74,14 +75,32 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
 
     return instructions.toOwnedSlice();
 }
-
+/// Convert a line of assembly code to a machine code instruction
 fn lineToMachineCode(line: [4]String, labels: *std.AutoHashMap(String, usize)) !u16 {
-    const op = line[0];
-    var opcode: u4 = 0b0000;
-    var dest: u4 = 0b0000;
+    _ = labels;
     // var src1: u4 = 0b0000;
     // var src2: u4 = 0b0000;
-    _ = labels;
+    const lineRes = try parseOpcode(line);
+    const opcode = lineRes.opcode;
+    const dest = lineRes.dest;
+
+    const opS = try utils.zeroPad(u4, opcode);
+    const destS = try utils.zeroPad(u4, dest);
+
+    std.debug.print("opcode: {s}\n", .{opS});
+    std.debug.print("  dest: {s}\n", .{destS});
+    return 0;
+}
+const parseOpcodeResult = struct {
+    opcode: u4,
+    dest: u4,
+};
+
+fn parseOpcode(line: [4]String) !parseOpcodeResult {
+    var opcode: u4 = 0b0000;
+    var dest: u4 = 0b0000;
+    const op = line[0];
+
     if (std.mem.eql(u8, op.str(), "load")) {
         opcode = 0b0001;
         dest = try parseRegister(line[1]);
@@ -120,11 +139,8 @@ fn lineToMachineCode(line: [4]String, labels: *std.AutoHashMap(String, usize)) !
     } else {
         return error.InvalidOpcode;
     }
-    const opS = try utils.zeroPad(u4, opcode);
-    const destS = try utils.zeroPad(u4, dest);
-    std.debug.print("opcode: {s}\n", .{opS});
-    std.debug.print("  dest: {s}\n", .{destS});
-    return 0;
+    const res = parseOpcodeResult{ .opcode = opcode, .dest = dest };
+    return res;
 }
 
 fn parseRegister(reg: String) !u4 {

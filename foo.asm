@@ -6,7 +6,7 @@ load R1, 5
 
 ; Main loop
 loop:
-    ; Print current number
+    ; Print current number ()
     out [R0]
 
     ; Increment counter
