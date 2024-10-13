@@ -4,6 +4,9 @@ load R0, 1
 ; Initialize loop end condition (R1) to 5
 load R1, 5
 
+end:
+    halt
+
 ; Main loop
 loop:
     ; Print current number ()
@@ -17,7 +20,5 @@ loop:
     sub R3, R0, R1
 
     ; If counter <= 5, continue loop
-    jumpz end
+    jumpz loop
 
-end:
-    halt

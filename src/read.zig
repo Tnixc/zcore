@@ -21,7 +21,7 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
-    var label_map = std.AutoHashMap(String, usize).init(arena.allocator());
+    var label_map = std.StringHashMap(usize).init(arena.allocator());
 
     while (try in_stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
         var linestr = String.init(arena.allocator());
@@ -43,7 +43,7 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
         if (linestr.endsWith(":")) { // line is label
             const label = try linestr.substr(0, linestr.len() - 1);
             std.debug.print("line {d}: LABEL: {s}\n", .{ index, label.str() });
-            try label_map.put(label, index);
+            label_map.put(label.str(), index) catch return error.LabelPutError;
         } else { // line is instruction
             std.debug.print("line {d}: {s}\n", .{ index, linestr.str() });
             linestr.toLowercase();
@@ -75,11 +75,11 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
         }
         index += 1;
     }
-
     return instructions.toOwnedSlice();
 }
+
 /// Convert a line of assembly code to a machine code instruction
-fn lineToMachineCode(line: [4]String, labels: *std.AutoHashMap(String, usize)) !u16 {
+fn lineToMachineCode(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     const lineRes = try parse.parseLine(line, labels);
     _ = lineRes;
     return 0;

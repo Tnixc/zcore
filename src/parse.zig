@@ -4,7 +4,7 @@ const utils = @import("util.zig");
 
 const String = @import("string").String;
 
-pub fn parseLine(line: [4]String, labels: *std.AutoHashMap(String, usize)) !u16 {
+pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     var opcode: u4 = 0b0000;
     var dest: u4 = 0b0000;
     var vals: u8 = 0b0000_0000;
@@ -70,9 +70,9 @@ fn parseInt(word: String) !u8 {
     return res;
 }
 
-fn indexOfLabel(line: [4]String, labels: *std.AutoHashMap(String, usize)) !?u8 {
+fn indexOfLabel(line: [4]String, labels: *std.StringHashMap(usize)) !?u8 {
     const label = line[1];
-    if (labels.get(label)) |index| {
+    if (labels.get(label.str())) |index| {
         if (index > 0b1111_1111) {
             return error.InvalidLabel;
         }
