@@ -1,24 +1,30 @@
-end:
-    halt ; 3
-    loadi R0, 128 ; 4
-    jump end ; 5
+; Initialize registers
+loadi r0, 1    ; r0 = counter (starts at 1)
+loadi r1, 6    ; r1 = limit (count up to 5)
+loadi r2, 0    ; r2 = sum
 
-somelabel:
-    loadi R0, 128 ; 6
-    jump somelabel ; 7
+end_loop:
+    ; Output final sum
+    out r2
+    ; End program
+    halt
 
 ; Main loop
 loop:
-    ; Print current number ()
-    out [R0] ; 8
+    ; Output current number
+    out r0
+
+    ; Add current number to sum
+    add r2, r2, r0
 
     ; Increment counter
-    load R2, 1 ; 9
-    add R0, R0, R2 ; 10
+    loadi r3, 1
+    add r0, r0, r3
 
-    ; Compare counter with end condition
-    sub R3, R0, R1 ; 11
+    ; Compare counter with limit
+    sub r3, r1, r0
+    jumpz end_loop
 
-    ; If counter <= 5, continue loop
-    jumpz loop ; 12
+    ; Continue loop
+    jump loop
 
