@@ -17,11 +17,13 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
 
     var buf: [256]u8 = undefined;
 
-    var index: usize = 0;
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
 
     var label_map = std.StringHashMap(usize).init(arena.allocator());
+
+    var line_index: usize = 0;
+    var index: usize = 0;
 
     while (try in_stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
         var linestr = String.init(arena.allocator());
@@ -42,10 +44,10 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
 
         if (linestr.endsWith(":")) { // line is label
             const label = try linestr.substr(0, linestr.len() - 1);
-            std.debug.print("line {d}: LABEL: {s}\n", .{ index, label.str() });
+            std.debug.print("line {d}| LABEL: {s}\n", .{ line_index, label.str() });
             label_map.put(label.str(), index) catch return error.LabelPutError;
         } else { // line is instruction
-            std.debug.print("line {d}: {s}\n", .{ index, linestr.str() });
+            std.debug.print("line {d}| index: {d} | {s}\n", .{ line_index, index, linestr.str() });
             linestr.toLowercase();
 
             // FORMAT: OP DEST,SRC1,SRC2
@@ -71,16 +73,10 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
             }
 
             // const thisRes = try lineToMachineCode(tokens, &label_map);
-            _ = try lineToMachineCode(tokens, &label_map);
+            _ = try parse.parseLine(tokens, &label_map);
+            index += 1;
         }
-        index += 1;
+        line_index += 1;
     }
     return instructions.toOwnedSlice();
-}
-
-/// Convert a line of assembly code to a machine code instruction
-fn lineToMachineCode(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
-    const lineRes = try parse.parseLine(line, labels);
-    _ = lineRes;
-    return 0;
 }

@@ -52,7 +52,7 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     } else {
         return error.InvalidOpcode;
     }
-    std.debug.print("opcode: {d}\ndest: {d}\nvals: {d}\n", .{ opcode, dest, vals });
+    // std.debug.print("opcode: {d}\ndest: {d}\nvals: {d}\n", .{ opcode, dest, vals });
     return 0;
 }
 
@@ -72,6 +72,7 @@ fn parseInt(word: String) !u8 {
 
 fn indexOfLabel(line: [4]String, labels: *std.StringHashMap(usize)) !?u8 {
     const label = line[1];
+    std.debug.print("label: {s} -> {?}\n", .{ label.str(), labels.get(label.str()) });
     if (labels.get(label.str())) |index| {
         if (index > 0b1111_1111) {
             return error.InvalidLabel;
