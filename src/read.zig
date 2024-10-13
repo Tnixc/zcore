@@ -26,6 +26,8 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
     while (try in_stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
         var linestr = String.init(arena.allocator());
         try linestr.setStr(line);
+
+        // preprocessing
         linestr.trim(&utils.whitelist);
 
         if (linestr.includesLiteral(";")) { // remove comments
@@ -47,7 +49,7 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
             linestr.toLowercase();
 
             // FORMAT: OP DEST,SRC1,SRC2
-
+            // tokenize
             var tokens = [4]String{ undefined, undefined, undefined, undefined };
             const tokens1 = try linestr.splitAllToStrings(" ");
             tokens[0] = tokens1[0];
@@ -67,7 +69,8 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
                     tokens[i].trim(",");
                 }
             }
-            // std.debug.print("res: {any}", .{lineToMachineCode(tokens)});
+
+            // const thisRes = try lineToMachineCode(tokens, &label_map);
             _ = try lineToMachineCode(tokens, &label_map);
         }
         index += 1;
@@ -77,17 +80,7 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
 }
 /// Convert a line of assembly code to a machine code instruction
 fn lineToMachineCode(line: [4]String, labels: *std.AutoHashMap(String, usize)) !u16 {
-    _ = labels;
-    // var src1: u4 = 0b0000;
-    // var src2: u4 = 0b0000;
-    const lineRes = try parse.parseOpcode(line);
-    const opcode = lineRes.opcode;
-    const dest = lineRes.dest;
-
-    const opS = try utils.zeroPad(u4, opcode);
-    const destS = try utils.zeroPad(u4, dest);
-
-    std.debug.print("opcode: {s}\n", .{opS});
-    std.debug.print("  dest: {s}\n", .{destS});
+    const lineRes = try parse.parseLine(line, labels);
+    _ = lineRes;
     return 0;
 }

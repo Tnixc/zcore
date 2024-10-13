@@ -22,7 +22,7 @@ pub const Cpu = struct {
 };
 
 pub fn main() !void {
-    _ = try read.readFileToMachineCode("foo.zasm");
+    _ = try read.readFileToMachineCode("foo.asm");
     // std.debug.print("a: {b}\n", .{a});
     // const cpu = Cpu{
     //     .PC = 0,

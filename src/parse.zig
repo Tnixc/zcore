@@ -4,17 +4,17 @@ const utils = @import("util.zig");
 
 const String = @import("string").String;
 
-const parseOpcodeResult = struct {
-    opcode: u4,
-    dest: u4,
-};
-
-pub fn parseOpcode(line: [4]String) !parseOpcodeResult {
+pub fn parseLine(line: [4]String, labels: *std.AutoHashMap(String, usize)) !u16 {
     var opcode: u4 = 0b0000;
     var dest: u4 = 0b0000;
+    var vals: u8 = 0b0000_0000;
     const op = line[0];
 
-    if (std.mem.eql(u8, op.str(), "load")) {
+    if (std.mem.eql(u8, op.str(), "loadi")) {
+        opcode = 0b0000;
+        dest = try parseRegister(line[1]);
+        vals = try parseInt(line[2]);
+    } else if (std.mem.eql(u8, op.str(), "load")) {
         opcode = 0b0001;
         dest = try parseRegister(line[1]);
     } else if (std.mem.eql(u8, op.str(), "store")) {
@@ -37,10 +37,10 @@ pub fn parseOpcode(line: [4]String) !parseOpcodeResult {
         dest = try parseRegister(line[1]);
     } else if (std.mem.eql(u8, op.str(), "jump")) {
         opcode = 0b1000;
-        dest = try parseRegister(line[1]);
+        vals = try indexOfLabel(line, labels) orelse return error.InvalidLabel;
     } else if (std.mem.eql(u8, op.str(), "jumpz")) {
         opcode = 0b1001;
-        dest = try parseRegister(line[1]);
+        vals = try indexOfLabel(line, labels) orelse return error.InvalidLabel;
     } else if (std.mem.eql(u8, op.str(), "halt")) {
         opcode = 0b1010;
     } else if (std.mem.eql(u8, op.str(), "in")) {
@@ -52,8 +52,34 @@ pub fn parseOpcode(line: [4]String) !parseOpcodeResult {
     } else {
         return error.InvalidOpcode;
     }
-    const res = parseOpcodeResult{ .opcode = opcode, .dest = dest };
+    std.debug.print("opcode: {d}\ndest: {d}\nvals: {d}\n", .{ opcode, dest, vals });
+    return 0;
+}
+
+fn parseInt(word: String) !u8 {
+    var res: u8 = 0;
+    var i: usize = 0;
+    while (i < word.len()) : (i += 1) {
+        const c = word.str()[i];
+        if (c >= '0' and c <= '9') {
+            res = res * 10 + (c - '0');
+        } else {
+            return error.InvalidInt;
+        }
+    }
     return res;
+}
+
+fn indexOfLabel(line: [4]String, labels: *std.AutoHashMap(String, usize)) !?u8 {
+    const label = line[1];
+    if (labels.get(label)) |index| {
+        if (index > 0b1111_1111) {
+            return error.InvalidLabel;
+        }
+        return @as(u8, @intCast(index));
+    } else {
+        return null;
+    }
 }
 
 pub fn parseRegister(reg: String) !u4 {
