@@ -10,7 +10,7 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     var vals: u8 = 0b0000_0000;
     const op = line[0];
 
-    if (std.mem.eql(u8, op.str(), "loadi")) {
+    if (std.mem.eql(u8, op.str(), "set")) {
         opcode = 0b0000;
         dest = try parseRegister(line[1]);
         vals = try parseInt(line[2]);
@@ -130,7 +130,7 @@ pub fn parseRegister(reg: String) !u4 {
         return error.InvalidRegister;
     }
     if (isPointer) {
-        res = 0b1000 + res;
+        res = 0b1000 | res;
     }
     return res;
 }
