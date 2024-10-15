@@ -23,7 +23,7 @@ pub const Cpu = struct {
 };
 
 pub fn main() !void {
-    const instructions = try read.readFileToMachineCode("foo.asm");
+    const instructions = try read.readFileToMachineCode("bar.asm");
     for (instructions) |instr| {
         std.debug.print("instr: {s}\n", .{try utils.zeroPad(u16, instr)});
     }
