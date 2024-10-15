@@ -52,7 +52,7 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
 
             // FORMAT: OP DEST,SRC1,SRC2
             // tokenize
-            var tokens = [4]String{ undefined, undefined, undefined, undefined };
+            var tokens = [_]String{undefined} ** 4;
             const tokens1 = try linestr.splitAllToStrings(" ");
             tokens[0] = tokens1[0];
 
