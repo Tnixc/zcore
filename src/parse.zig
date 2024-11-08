@@ -59,6 +59,7 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     } else {
         return error.InvalidOpcode;
     }
+
     const op16 = @as(u16, opcode) << 12;
     const dest16 = @as(u16, dest) << 8;
     const vals16 = @as(u16, vals);

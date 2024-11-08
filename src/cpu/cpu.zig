@@ -4,7 +4,7 @@ pub const Cpu = struct {
     PC: u16,
     IR: u16,
     Flags: u8,
-    Registers: [8]u16,
+    Registers: [8]u8,
     WorkingMemory: [256]u16,
     Program: []const u16,
 };
