@@ -5,7 +5,7 @@ pub fn StrToU8(str: []const u8) []const u8 {
 }
 
 pub fn zeroPad(comptime T: type, value: T) ![]const u8 {
-    const bits = @typeInfo(T).Int.bits;
+    const bits = @typeInfo(T).int.bits;
     var arr: [bits]u8 = undefined;
     var i: usize = bits;
     while (i > 0) : (i -= 1) {
