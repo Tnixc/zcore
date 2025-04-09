@@ -49,7 +49,6 @@ pub fn readFileToMachineCode(filename: []const u8) ![]const u16 {
         } else { // line is instruction
             std.debug.print("line {d}| index: {d} | {s}\n", .{ line_index, index, linestr.str() });
             linestr.toLowercase();
-
             // FORMAT: OP DEST,SRC1,SRC2
             // tokenize
             var tokens = [_]String{undefined} ** 4;

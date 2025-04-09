@@ -11,7 +11,7 @@ pub fn main() !void {
     // for (instructions) |instr| {
     //     std.debug.print("instr: {s}\n", .{try utils.zeroPad(u16, instr)});
     // }
-    const z = cpu.Cpu{
+    var z = cpu.Cpu{
         .PC = 0,
         .IR = 0,
         .Flags = 0b0000_0000,
@@ -19,5 +19,6 @@ pub fn main() !void {
         .WorkingMemory = [_]u16{0} ** 256,
         .Program = instructions,
     };
+    z.Flags |= 0b1000_0000;
     std.debug.print("CPU!\n{any}\n", .{z});
 }

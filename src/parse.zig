@@ -13,7 +13,7 @@ pub fn parseLine(line: [4]String, labels: *std.StringHashMap(usize)) !u16 {
     if (std.mem.eql(u8, op.str(), "set")) {
         opcode = 0b0000;
         dest = try parseRegister(line[1]);
-        vals = try parseInt(line[2]);
+        vals = try std.fmt.parseInt(u8, line[2].str(), 10);
     } else if (std.mem.eql(u8, op.str(), "load")) {
         opcode = 0b0001;
         dest = try parseRegister(line[1]);
@@ -72,20 +72,6 @@ fn dualVal(w1: String, w2: String) !u8 {
     const val1 = try parseRegister(w1);
     const val2 = try parseRegister(w2);
     const res: u8 = (@as(u8, val1) << 4) | val2;
-    return res;
-}
-
-fn parseInt(word: String) !u8 {
-    var res: u8 = 0;
-    var i: usize = 0;
-    while (i < word.len()) : (i += 1) {
-        const c = word.str()[i];
-        if (c >= '0' and c <= '9') {
-            res = res * 10 + (c - '0');
-        } else {
-            return error.InvalidInt;
-        }
-    }
     return res;
 }
 
